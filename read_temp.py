@@ -42,55 +42,20 @@ class Thermistor:
         steinhart += 1.0 / (self.TEMP_NOM + 273.15)
         steinhart  = (1.0 / steinhart) - 273.15
         return steinhart
-    
-    def open_file(self,filename):
-        self.file = open(filename, "w")
-
-    def write_to_file(self):
-        temp = self.read_temp
-        self.file.write(temp)
-    
 
     def log_temp_file(self, sampling_rate, measurements,filename):
         sample_last_ms = 0
-        self.open_file(filename)
-        while(measurements):
+        file = open(filename, "w")
+        while (measurements > 0):
             if utime.ticks_diff(utime.ticks_ms(), sample_last_ms) >= sampling_rate:
-                print(self.read_temp())
-                self.write_to_file()
+                temp = str(self.read_temp())
+                print('Thermistor temperature: ' + temp)
+                file.write(temp + '\n')
                 sample_last_ms = utime.ticks_ms()
-            measurements -= 1
+                measurements -= 1
+        file.close()
 
 
 print("I'm alive")
 thermistor = Thermistor(TEMP_SENS_ADC_PIN_NO=32)
 thermistor.log_temp_file(sampling_rate=1000,measurements=10,filename="temp_test.txt")
-
-
-
-
-            
-
-
-
-# def init_temp_sensor(TENP_SENS_ADC_PIN_NO = 32):
-#     adc = ADC(Pin(TENP_SENS_ADC_PIN_NO))
-#     adc.atten(ADC.ATTN_11DB)
-#     adc.width(ADC.WIDTH_10BIT)
-#     return adc
-
-
-
-# print("I'm alive!\n")
-# utime.sleep_ms(2000)
-
-# temp_sens = init_temp_sensor()
-
-# sample_last_ms = 0
-# SAMPLE_INTERVAL = 1000
-
-# while (True):
-#     if utime.ticks_diff(utime.ticks_ms(), sample_last_ms) >= SAMPLE_INTERVAL:
-#         temp = read_temp(temp_sens)
-#         print('Thermistor temperature: ' + str(temp))
-#         sample_last_ms = utime.ticks_ms()
