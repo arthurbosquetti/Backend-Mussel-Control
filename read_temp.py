@@ -1,6 +1,7 @@
 from machine import Pin
 from machine import ADC
 from machine import DAC
+from machine import RTC
 from math import log
 
 import machine
@@ -43,19 +44,43 @@ class Thermistor:
         steinhart  = (1.0 / steinhart) - 273.15
         return steinhart
 
-    def log_temp_file(self, sampling_rate, measurements,filename):
+    def log_temp_file(self, sampling_rate,filename):
         sample_last_ms = 0
         file = open(filename, "w")
-        while (measurements > 0):
+        file.close()
+        while True:
             if utime.ticks_diff(utime.ticks_ms(), sample_last_ms) >= sampling_rate:
+                file = open(filename, "a")
                 temp = str(self.read_temp())
                 print('Thermistor temperature: ' + temp)
+                # now = utime.time()
+                # t = utime.localtime(now)
+                # print("time: "+str(t))
+                # print("Current RTC time: " + RTC.datetime())
                 file.write(temp + '\n')
                 sample_last_ms = utime.ticks_ms()
                 measurements -= 1
+                file.close()
+
+    def log_temp_file(self, sampling_rate, measurements,filename):
+        sample_last_ms = 0
+        file = open(filename, "w")
         file.close()
+        while (measurements > 0):
+            if utime.ticks_diff(utime.ticks_ms(), sample_last_ms) >= sampling_rate:
+                file = open(filename, "a")
+                temp = str(self.read_temp())
+                print('Thermistor temperature: ' + temp)
+                # now = utime.time()
+                # t = utime.localtime(now)
+                # print("time: "+str(t))
+                # print("Current RTC time: " + RTC.datetime())
+                file.write(temp + '\n')
+                sample_last_ms = utime.ticks_ms()
+                measurements -= 1
+                file.close()
 
 
-print("I'm alive")
-thermistor = Thermistor(TEMP_SENS_ADC_PIN_NO=32)
-thermistor.log_temp_file(sampling_rate=1000,measurements=10,filename="temp_test.txt")
+# print("I'm alive")
+# thermistor = Thermistor(TEMP_SENS_ADC_PIN_NO=32)
+# thermistor.log_temp_file(sampling_rate=1000,measurements=10,filename="temp_test.txt")
