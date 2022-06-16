@@ -9,15 +9,21 @@ pin_dir.on()
 
 frequency = 4000
 
-pwm = PWM(Pin(15),frequency,duty=512)
+pwm1 = PWM(Pin(14),frequency,duty=512)
+pwm2 = PWM(Pin(21),frequency,duty=512)
 
-utime.sleep_us(2000)
+utime.sleep(2)
+print("First stepper...")
+pwm1.freq(2000)
+pwm2.freq(0)
 
-pwm.freq(3000)
+utime.sleep(2)
 
-utime.sleep_us(2000)
+print("Second stepper...")
+pwm1.freq(0)
 
-pwm.freq(5000)
+
+pwm2.freq(2000)
 
 
 # # pwm.freq(1600)

@@ -23,6 +23,23 @@ class StepperMotor:
             print("Current frequency: {}".format(current_freq))
             utime.sleep_ms(100)
 
+    def setSpeed(self,frequency):
+        current_freq = self.pwm.freq()
+        if (current_freq > frequency):
+            self.pwm(frequency)
+            return
+        elif (current_freq == frequency):
+            return
+        while(current_freq < frequency):
+            if(current_freq + 1000 >= frequency):
+                self.pwm.freq(frequency)
+                print("set to final frequency")
+                break
+            current_freq += 1000
+            self.pwm.freq(current_freq)
+            print("Current frequency: {}".format(current_freq))
+            utime.sleep_ms(100)
+
     def rotate(self, rotations, direction):
         if direction == 'cw':   # clockwise
             self.dir.on()

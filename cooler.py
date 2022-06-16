@@ -18,12 +18,12 @@ class Cooler:
         self.fan.off()
         
 
-fan = Pin(12, Pin.OUT)
+# fan = Pin(12, Pin.OUT)
 
-peltier = Pin(27, Pin.OUT)
+# peltier = Pin(27, Pin.OUT)
 
 
-peltier.off()
-fan.off()
+# peltier.off()
+# fan.off()
 
-cooler = Cooler(peltier_pin = 27, Pin.OUT, fan_pin = 12)
+#cooler = Cooler(peltier_pin = 27, fan_pin = 12)
