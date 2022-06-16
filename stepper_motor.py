@@ -7,12 +7,13 @@ class StepperMotor:
         self.step = Pin(step_pin, Pin.OUT)
         self.dir = Pin(dir_pin, Pin.OUT)
         # frequency = 4000
-        self.pwm = PWM(Pin(step_pin),0,duty=512)
+        self.pwm = PWM(Pin(step_pin),2000,duty=0)
         
     def start_motor(self,frequency):
+        self.pwm.duty(512)
         # self.pwm.freq(3000)
         # self.pwm.freq(5000)
-        current_freq = 0
+        current_freq = 2000
         while(current_freq < frequency):
             if(current_freq + 1000 >= frequency):
                 self.pwm.freq(frequency)

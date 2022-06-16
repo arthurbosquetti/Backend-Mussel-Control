@@ -31,16 +31,16 @@ cooler.fan_on()
 time.sleep(1)
 thermistor = read_temp.Thermistor(TEMP_SENS_ADC_PIN_NO=32)
 
-P = 10
-I = 0
-D = 0
+# P = 10
+# I = 0
+# D = 0
 
-pid = PID_Thermistor.PID(thermistor,cooler,stepper, setpoint=18, limit=10000, base_low=0, base_high=0)
-pid.PID_control(P,I,D,"pid_experiment.txt")
+# pid = PID_Thermistor.PID(thermistor,cooler,stepper, setpoint=18, limit=10000, base_low=0, base_high=0)
+# pid.PID_control(P,I,D,"pid_experiment.txt")
 
 
-# print("Start measurements...")
-# thermistor.log_temp_file(sampling_rate=120000,filename="cooling_overnight_high.txt")
+print("Start measurements...")
+thermistor.log_temp_file(sampling_rate=120000,filename="cooling_overnight_high.txt")
 
 
 
