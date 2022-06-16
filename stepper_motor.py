@@ -24,6 +24,11 @@ class StepperMotor:
             utime.sleep_ms(100)
 
     def setSpeed(self,frequency):
+        if(frequency < 1):
+            self.pwm.duty(0)
+            return
+        else:
+            self.pwm.duty(512)
         current_freq = self.pwm.freq()
         if (current_freq > frequency):
             self.pwm(frequency)

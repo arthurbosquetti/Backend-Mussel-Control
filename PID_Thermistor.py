@@ -98,6 +98,9 @@ class PID:
         self.P = P
         self.I = I
         self.D = D
+
+        self.MAX_OUTPUT = P*10*self.max_error
+
         if(filename != ""):
             file = open(filename, "w")
             file.write("temperature  \t error \t PID output")
