@@ -76,7 +76,7 @@ mqtt_client_id = bytes('client_'+str(random_num), 'utf-8')
 #         (about 1/4 of the micropython heap on the ESP8266 platform)
 ADAFRUIT_IO_URL = b'io.adafruit.com' 
 ADAFRUIT_USERNAME = b'arthurbosquetti'
-ADAFRUIT_IO_KEY = b'aio_GpeT11RMZVBT9MRN3s1lzK8ua4pN'
+ADAFRUIT_IO_KEY = b'aio_tMvu464InpmhOZEjDl2Dnx8cJZhI'
 ADAFRUIT_IO_FEEDNAME = b'Temperature'
 
 client = MQTTClient(client_id=mqtt_client_id, 
@@ -139,10 +139,25 @@ while True:
         if wifi.isconnected() and wifi_was_connected:
             print("Checking for messages...")
             client.check_msg()
+        elif wifi.isconnected() and not wifi_was_connected:
+            print("trying to resubscribe the client...")
+            try:            
+                client.connect()
+                print("client connected!")
+                client.set_callback(cb) 
+                print("callback set!")     
+                client.subscribe(mqtt_feedname) 
+                print("client subscribed!") 
+                wifi_was_connected = True
+                
+            except Exception as e:
+                print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
+                # sys.exit()            
 
         # Avoid checking for new messages when disconnects
         if not wifi.isconnected():
             print("wifi is off")
+            # client.disconnect()
             wifi_was_connected = False
         
         utime.sleep(SUBSCRIBE_CHECK_PERIOD_IN_SEC)
