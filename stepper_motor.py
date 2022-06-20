@@ -32,17 +32,17 @@ class StepperMotor:
             self.pwm.duty(512)
         current_freq = self.pwm.freq()
         if (current_freq > frequency):
-            self.pwm(frequency)
+            self.pwm.freq(int(frequency))
             return
         elif (current_freq == frequency):
             return
         while(current_freq < frequency):
             if(current_freq + 1000 >= frequency):
-                self.pwm.freq(frequency)
+                self.pwm.freq(int(frequency))
                 print("set to final frequency")
                 break
             current_freq += 1000
-            self.pwm.freq(current_freq)
+            self.pwm.freq(int(current_freq))
             print("Current frequency: {}".format(current_freq))
             utime.sleep_ms(100)
 

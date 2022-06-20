@@ -22,8 +22,8 @@ class RGBsensor:
     def __init__(self, i2c):
         # Define rgb sensor
         self.sensor = tcs34725.TCS34725(i2c)
-        self.sensor.integration_time(614.4) #value between 2.4 and 614.4, exposure time
-        self.sensor.gain(60) #must be a value of 1, 4, 16, 60
+        self.sensor.integration_time(500) #value between 2.4 and 614.4, exposure time
+        self.sensor.gain(16) #must be a value of 1, 4, 16, 60
 
     def color_rgb_bytes(self):
         """Read the RGB color detected by the sensor.  Returns a 3-tuple of
@@ -38,17 +38,29 @@ class RGBsensor:
         if clear == 0:
             return (0, 0, 0)
 
-        red   = int(pow((int((r/clear) * 256) / 255), 2.5) * 255)
+        red = int(pow((int((r/clear) * 256) / 255), 2.5) * 255)
         green = int(pow((int((g/clear) * 256) / 255), 2.5) * 255)
-        blue  = int(pow((int((b/clear) * 256) / 255), 2.5) * 255)
-        # Handle possible 8-bit overflow
+        blue = int(pow((int((b/clear) * 256) / 255), 2.5) * 255)
+
         if red > 255:
             red = 255
         if green > 255:
             green = 255
         if blue > 255:
             blue = 255
-        return (r,g,b)
+
+        return (int(r), int(g), int(b))
+        # red   = int(pow((int((r/clear) * 256) / 255), 2.5) * 255)
+        # green = int(pow((int((g/clear) * 256) / 255), 2.5) * 255)
+        # blue  = int(pow((int((b/clear) * 256) / 255), 2.5) * 255)
+        # # Handle possible 8-bit overflow
+        # if red > 255:
+        #     red = 255
+        # if green > 255:
+        #     green = 255
+        # if blue > 255:
+        #     blue = 255
+        # return (r,g,b,red,green,blue)
 
 
 

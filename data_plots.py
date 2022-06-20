@@ -4,7 +4,7 @@ import numpy as np
 import math
 import sympy as sym
 
-filename = "cooling_overnight_high.txt"
+filename = "heatloss_overnight.txt"
 file = open(filename, "r")
 data = file.readlines()
 ydata = []
