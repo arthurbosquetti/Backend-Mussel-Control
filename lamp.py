@@ -24,14 +24,14 @@ class Lamp:
 
 
 
-lamp = Lamp(cool_pin = 25, warm_pin = 26)
+# lamp = Lamp(cool_pin = 25, warm_pin = 26)
 
-for i in range(1000):
-    lamp.cool_on()
-    time.sleep(1)
-    lamp.warm_on()
-    time.sleep(1)
-    lamp.full_on()
-    time.sleep(1)
-    lamp.blackout()
-    time.sleep(2)
+# for i in range(1000):
+#     lamp.cool_on()
+#     time.sleep(1)
+#     lamp.warm_on()
+#     time.sleep(1)
+#     lamp.full_on()
+#     time.sleep(1)
+#     lamp.blackout()
+#     time.sleep(2)

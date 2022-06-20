@@ -9,9 +9,17 @@ import sys
 
 class IOConnect:
 
-    def __init__(self, client, feeds):
-        self.client = client
-        self.feeds = feeds
+    def __init__(self, sub_feeds, pub_feeds):
+        self.subscription_feeds = sub_feeds
+        self.publish_feeds = pub_feeds
+
+    def initClient(self, url, username, key, cb_function):
+        random_num = int.from_bytes(os.urandom(3), 'little')
+        mqtt_client_id = bytes('client_'+str(random_num), 'utf-8')
+        self.client = MQTTClient(client_id=mqtt_client_id, 
+                                 server=url, user=username, 
+                                 password=key, ssl=False)
+        self.client.set_callback(cb_function)
 
     def setWifi(self, wifi_ssid, wifi_password):
         ap_if = network.WLAN(network.AP_IF)
@@ -38,7 +46,7 @@ class IOConnect:
             self.client.connect()
             print("client connected!")
 
-            for feed in self.feeds:
+            for feed in self.subscription_feeds:
                 self.client.subscribe(feed)
             print("client subscribed!")
         except Exception as e:
@@ -47,8 +55,8 @@ class IOConnect:
     def publishData(self, data):
         if self.wifi.isconnected():
             print("Publishing data online...")
-            for i in range(len(self.feeds)):
-                self.client.publish(feeds[i], bytes(str(data[i]), 'utf-8'), qos=0)
+            for i in range(len(self.publish_feeds)):
+                self.client.publish(self.publish_feeds[i], bytes(str(data[i]), 'utf-8'), qos=0)
         else:
             print("Could not publish data online!")
 
@@ -66,65 +74,3 @@ class IOConnect:
             self.wifi_was_connected = False
         elif self.wifi.isconnected() and self.wifi_was_connected:
             self.client.check_msg()
-
-
-####### TESTING ########
-"""
-print("Sleeping for 10 sec...")
-utime.sleep(10)
-
-def cb(topic, msg):
-    print('Subscribe:  Received Data:  Topic = {}, Msg = {}\n'.format(topic, msg))
-    # free_heap = int(str(msg,'utf-8'))
-
-random_num = int.from_bytes(os.urandom(3), 'little')
-mqtt_client_id = bytes('client_'+str(random_num), 'utf-8')
-
-ADAFRUIT_IO_URL = b'io.adafruit.com' 
-ADAFRUIT_USERNAME = b'arthurbosquetti'
-ADAFRUIT_IO_KEY = b'<>'
-ADAFRUIT_IO_FEEDNAME = b'Temperature'
-
-client = MQTTClient(client_id=mqtt_client_id, 
-                    server=ADAFRUIT_IO_URL, 
-                    user=ADAFRUIT_USERNAME, 
-                    password=ADAFRUIT_IO_KEY,
-                    ssl=False)
-client.set_callback(cb)
-
-mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME), 'utf-8')
-feeds = [mqtt_feedname]
-
-IOManager = IOConnect(client, feeds)
-IOManager.setWifi("Arthur iPhone", "<>")
-IOManager.connectWifi(10, 3)
-IOManager.clientConnectSubscribe()
-
-
-temperature_data = 0
-accum_time = 0
-publish_time = 10
-subs_time = 0.5
-
-data_file = open("data_file.txt", "w")
-data_file.close() 
-
-while True:
-    temperature_data += 1
-
-    if accum_time >= publish_time:
-        print("Saving data locally...")
-        data_file = open("data_file.txt", "a")
-        data_file.write("{} \n".format(temperature_data))
-        data_file.close()
-
-        data = [temperature_data]
-        IOManager.publishData(data)
-        accum_time = 0
-    IOManager.checkMessages()
-
-    utime.sleep(subs_time)
-    accum_time += subs_time
-
-"""
-    
