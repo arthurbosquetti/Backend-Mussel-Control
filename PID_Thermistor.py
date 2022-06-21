@@ -133,7 +133,9 @@ class PID:
         print("PID output: {}".format(output))
         self.prev_error = self.current_error
         self.plant_reaction(output)
-        time.sleep(1)
+        # time.sleep(1)
+
+        return output
 
 
     def PID_control(self,P,I,D,filename=None):
