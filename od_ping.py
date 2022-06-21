@@ -18,7 +18,29 @@ class Photosensor:
             time.sleep(interval_in_sec)
 
     def read(self):
-        return self.adc.read()
+        readings = 0
+        for _ in range(50):
+            readings += self.adc.read()
+        return readings/50
+
+    def algaeConcentration(self):
+        reading = self.read()
+        if reading > 3588:
+            return 5000
+        elif reading > 3585:
+            return 10000
+        elif reading > 3580:
+            return 50000
+        elif reading > 3575:
+            return 100000
+        elif reading > 3565:
+            return 200000
+        elif reading > 3555:
+            return 300000
+        elif reading > 3545:
+            return 400000
+        else:
+            return 500000
 
 # od = machine.Pin(32, machine.Pin.IN)
 # adc = machine.ADC(od)        # create an ADC object acting on a pin
