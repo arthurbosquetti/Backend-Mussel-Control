@@ -99,6 +99,41 @@ class PID:
         
     # def __getError__(self):
     #     return self.setpoint - self.thermistor.read_temp()
+    
+    def PID_once(self,P,I,D):
+        self.P = P
+        self.I = I
+        self.D = D
+
+        self.MAX_OUTPUT = self.max_error
+
+        if P != 0:
+            self.MAX_OUTPUT *= P
+        if I != 0:
+            self.MAX_OUTPUT *= I
+        if D != 0:
+            self.MAX_OUTPUT *= D
+        
+        print("Maximum output is: {}".format(self.MAX_OUTPUT))
+
+        t = self.thermistor.read_temp()
+        self.current_error = t - self.setpoint
+
+        print("Current temperature: {}".format(t))
+        print("Current error: {}".format(self.current_error))
+
+        self.error_list.append(self.current_error)
+
+        if(len(self.error_list)>self.INTEGRAL_INTERVAL):
+            self.error_list.pop(0)
+
+        # self.error_sum += self.current_error
+        output = P*self.current_error+I*sum(self.error_list)+D*(self.current_error-self.prev_error)
+            
+        print("PID output: {}".format(output))
+        self.prev_error = self.current_error
+        self.plant_reaction(output)
+        time.sleep(1)
 
 
     def PID_control(self,P,I,D,filename=None):
