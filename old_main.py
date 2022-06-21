@@ -24,7 +24,7 @@ import i2c_bus
 
 # stepper.setSpeed(0)
 print("Intializing stepper 2...")
-stepper = stepper_motor.StepperMotor(step_pin = 21, dir_pin = 33)
+stepper = stepper_motor.StepperMotor(step_pin = 14)
 print("Starting stepper 2...")
 stepper.start_motor(10000)
 # time.sleep(2)

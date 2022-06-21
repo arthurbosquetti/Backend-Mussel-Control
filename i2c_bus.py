@@ -22,8 +22,8 @@ class RGBsensor:
     def __init__(self, i2c):
         # Define rgb sensor
         self.sensor = tcs34725.TCS34725(i2c)
-        self.sensor.integration_time(500) #value between 2.4 and 614.4, exposure time
-        self.sensor.gain(16) #must be a value of 1, 4, 16, 60
+        self.sensor.integration_time(614.4) #value between 2.4 and 614.4, exposure time
+        self.sensor.gain(60) #must be a value of 1, 4, 16, 60
 
     def color_rgb_bytes(self):
         """Read the RGB color detected by the sensor.  Returns a 3-tuple of

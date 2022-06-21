@@ -1,13 +1,14 @@
-import machine 
-from machine import ADC
+import machine
+from machine import ADC, Pin
 import time
 
 class Photosensor:
     def __init__(self,pin):
-        self.od = machine.Pin(pin, machine.Pin.IN)
-        self.adc = machine.ADC(self.od)    
-        self.adc.atten(ADC.ATTN_11DB)
-    
+        self.od = Pin(pin, machine.Pin.IN)
+        self.adc = ADC(self.od)
+        self.adc.atten(ADC.ATTN_6DB)
+        # self.adc.width(ADC.WIDTH_12BIT)
+
     def readLoop(self,interval_in_sec):
         while True:
             val_ana = self.adc.read_u16()     # read a raw analog value in the range 0-65535

@@ -1,0 +1,28 @@
+tap water: 56400 - 56800
+
+5k cells/mL: 57300 - 57600
+
+10k cells/mL: 57500 - 57700
+
+50k cells/mL: 57600 - 57700
+
+500k cells/mL: 56600 - 56800
+
+300k + food colour: 54700 - 54900
+
+
+
+
+
+	DIFFERENT SETUP:
+
+tap water: 3610
+
+5k: 3590
+
+10k: 3588
+
+50k: 3585
+
+500k: 3540
+
