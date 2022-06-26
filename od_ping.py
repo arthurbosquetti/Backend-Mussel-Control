@@ -41,16 +41,3 @@ class Photosensor:
             return 400000
         else:
             return 500000
-
-# od = machine.Pin(32, machine.Pin.IN)
-# adc = machine.ADC(od)        # create an ADC object acting on a pin
-
-# adc.atten(ADC.ATTN_11DB)
-
-
-# while True:
-#     val_ana = adc.read_u16()     # read a raw analog value in the range 0-65535
-#     val = adc.read()
-#     # val_mv = adc.read_uv()      # read an analog value in microvolts
-#     print("analogue: {}, simple read: {}".format(val_ana,val))
-#     time.sleep(0.5)

@@ -39,17 +39,25 @@ def cb(topic, msg):
             lamp.full_on()
         elif msg.decode() == "3":
             lamp.cool_on()
+    elif topic.decode() == "arthurbosquetti/feeds/Algae Pump":
+        if msg.decode() == "FEED":
+            mussel_pump.setSpeed(0)
+            algae_pump.setSpeed(10000)
+            utime.sleep(10)
+            algae_pump.setSpeed(0)
+            mussel_pump.setSpeed(5000)
 
 ADAFRUIT_IO_URL = b'io.adafruit.com' 
 ADAFRUIT_USERNAME = b'arthurbosquetti'
-ADAFRUIT_IO_KEY = b'aio_Ijnp46tWngmvbUPnGeDIV5bs3RF5'
+ADAFRUIT_IO_KEY = b''
 
 ADAFRUIT_IO_FEEDNAME1 = b'Mussel Pump'           # publish
 ADAFRUIT_IO_FEEDNAME2 = b'Temperature'           # publish
 ADAFRUIT_IO_FEEDNAME3 = b'Algae Lamp'            # subscribe
 ADAFRUIT_IO_FEEDNAME4 = b'Algae Pump'            # subscribe, publish
 ADAFRUIT_IO_FEEDNAME5 = b'Algae Concentration'   # publish
-ADAFRUIT_IO_FEEDNAME6 = b'PID'                   # publish
+ADAFRUIT_IO_FEEDNAME6 = b'PID Error'             # publish
+ADAFRUIT_IO_FEEDNAME7 = b'PID Output'            # publish
 
 mqtt_feedname1 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME1), 'utf-8')
 mqtt_feedname2 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME2), 'utf-8')
@@ -57,14 +65,15 @@ mqtt_feedname3 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_F
 mqtt_feedname4 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME4), 'utf-8')
 mqtt_feedname5 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME5), 'utf-8')
 mqtt_feedname6 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME6), 'utf-8')
+mqtt_feedname7 = bytes('{:s}/feeds/{:s}'.format(ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME7), 'utf-8')
 
 subscription_feeds = [mqtt_feedname3, mqtt_feedname4]
 publish_feeds      = [mqtt_feedname1, mqtt_feedname2, mqtt_feedname4, 
-                      mqtt_feedname5, mqtt_feedname6]
+                      mqtt_feedname5, mqtt_feedname6, mqtt_feedname7]
 
 IOManager = IOConnect(subscription_feeds, publish_feeds)
 IOManager.initClient(ADAFRUIT_IO_URL, ADAFRUIT_USERNAME, ADAFRUIT_IO_KEY, cb)
-IOManager.setWifi("Arthur iPhone", "aviaodepapel")
+IOManager.setWifi(wifi_ssid = "", wifi_password = "")
 oled.printWiFiStatus(IOManager.wifi.isconnected())
 IOManager.connectWifi(10, 3)
 IOManager.clientConnectSubscribe()
@@ -100,7 +109,7 @@ K_i = 1.5
 K_d = 0.2
 
 data_file = open("data_file.txt", "w")
-data_file.write("Temperature, Algae Concentration, PID Output \n")
+data_file.write("Temperature, Algae Concentration, PID Error, PID Output \n")
 data_file.close() 
 
 while True:
@@ -109,22 +118,22 @@ while True:
 
     oled.printWiFiStatus(IOManager.wifi.isconnected())
     if not feeding:
-        pid_output = pid.PID_once(K_p, K_i, K_d)
+        pid_error, pid_output = pid.PID_once(K_p, K_i, K_d)
 
     if accum_time >= publish_time:
         
         temperature_data = temp_sensor.read_temp()
-        algae_concentration = photosensor.algaeConcentration()
+        # REPLACE OD_VALUE BY ALGAE CONCENTRATION WHEN SAVING DATA!
+        # algae_concentration = photosensor.algaeConcentration()
+        od_value = photosensor.read()
 
         print("Saving data locally...")
         data_file = open("data_file.txt", "a")
-        data_file.write("{}, {}, {} \n".format(temperature_data, 
-                                               algae_concentration,
-                                               pid_output))
+        data_file.write("{}, {}, {}, {} \n".format(temperature_data, od_value, pid_error, pid_output))
         data_file.close()
 
-        data = [mussel_pump.pwm.freq(), temperature_data, algae_pump.pwm.freq(), 
-                algae_concentration, pid_output]
+        data = [mussel_pump.pwm.freq(), temperature_data, algae_pump.pwm.duty(), 
+                od_value, pid_error, pid_output]
         IOManager.publishData(data)
         accum_time = 0
     

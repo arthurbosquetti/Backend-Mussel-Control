@@ -40,14 +40,14 @@ class PID:
         self.PELTIER_LOW = False
         self.cooler.peltier_off()
         self.cooler.fan_on()
-        print("adjusted peltier to high")
+        # print("adjusted peltier to high")
     
     def setPeltierLow(self):
         # self.M0 = self.BASE_LOW
         self.PELTIER_LOW = True
         self.cooler.peltier_on()
         self.cooler.fan_on()
-        print("adjusted peltier to low")
+        # print("adjusted peltier to low")
 
     def relate_low(self,output):
         #low output from 5 to self.MAX_OUTPUT/2
@@ -76,29 +76,6 @@ class PID:
             f = self.relate_high(self.MAX_OUTPUT)
             self.setPeltierHigh()
         self.stepper.setSpeed(f)
-
-
-        # f = pid_output
-        # if(f > self.LIMIT_FREQ and self.PELTIER_LOW):
-        #     self.setPeltierHigh()
-        #     self.stepper.setSpeed(self.LIMIT_FREQ)
-        #     f = self.LIMIT_FREQ
-        # elif(f < self.M0 and not self.PELTIER_LOW):
-        #     self.setPeltierLow()
-        #     f = self.M0
-        # elif(f < self.M0):
-        #     f = 0
-        # elif(f > self.LIMIT_FREQ):
-        #     f = self.LIMIT_FREQ
-
-        # self.stepper.setSpeed(f)
-        print("set speed to: {}".format(f))
-
-            
-
-        
-    # def __getError__(self):
-    #     return self.setpoint - self.thermistor.read_temp()
     
     def PID_once(self,P,I,D):
         self.P = P
@@ -114,13 +91,13 @@ class PID:
         if D != 0:
             self.MAX_OUTPUT *= D
         
-        print("Maximum output is: {}".format(self.MAX_OUTPUT))
+        # print("Maximum output is: {}".format(self.MAX_OUTPUT))
 
         t = self.thermistor.read_temp()
         self.current_error = t - self.setpoint
 
-        print("Current temperature: {}".format(t))
-        print("Current error: {}".format(self.current_error))
+        # print("Current temperature: {}".format(t))
+        # print("Current error: {}".format(self.current_error))
 
         self.error_list.append(self.current_error)
 
@@ -130,12 +107,12 @@ class PID:
         # self.error_sum += self.current_error
         output = P*self.current_error+I*sum(self.error_list)+D*(self.current_error-self.prev_error)
             
-        print("PID output: {}".format(output))
+        # print("PID output: {}".format(output))
         self.prev_error = self.current_error
         self.plant_reaction(output)
         # time.sleep(1)
 
-        return output
+        return self.current_error, output
 
 
     def PID_control(self,P,I,D,filename=None):
@@ -153,7 +130,7 @@ class PID:
         if D != 0:
             self.MAX_OUTPUT *= D
         
-        print("Maximum output is: {}".format(self.MAX_OUTPUT))
+        # print("Maximum output is: {}".format(self.MAX_OUTPUT))
 
 
         if(filename):
@@ -165,8 +142,8 @@ class PID:
             t = self.thermistor.read_temp()
             self.current_error = t - self.setpoint
 
-            print("Current temperature: {}".format(t))
-            print("Current error: {}".format(self.current_error))
+            # print("Current temperature: {}".format(t))
+            # print("Current error: {}".format(self.current_error))
 
             self.error_list.append(self.current_error)
             if(len(self.error_list)>self.INTEGRAL_INTERVAL):
@@ -180,7 +157,7 @@ class PID:
                 file.write(str(t) + '\t' + str(self.current_error) + '\t' + str(output) + '\n')
                 file.close()
             
-            print("PID output: {}".format(output))
+            # print("PID output: {}".format(output))
             self.prev_error = self.current_error
             self.plant_reaction(output)
             time.sleep(1)
